@@ -37,7 +37,7 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
   }
 
   // Variables to set ways
-  bool oneway = 0;
+  bool flag, oneway = 0;
   unsigned long prev, curr;
   unsigned long prev_pos, curr_pos;
 
@@ -46,14 +46,14 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
   char *tok = strsep(&end, delim);  // we can skip the first field
   int counter = 0;
   while ((tok = strsep(&end, delim)) != NULL){
-    printf("%d, %s\n", counter, tok);
     if (counter == 6) {
       if (strcmp(tok, "way") != 0) {oneway = 1;}
     } else if (counter == 8){
       // Find Current node
       prev = strtoul(tok, &tok, 10);
       if ((prev_pos = nodesearch(nodes, prev, no_nodes)) == -1) {printf("Node id not found\n"); return;}
-      // Set up successors
+
+      // Set up successor
       if (nodes[prev_pos].nsucc == 0){
         if ((nodes[prev_pos].successors = (unsigned long *) malloc(sizeof(unsigned long))) == NULL)
           printf("Cannot allocate memory for successors \n");
@@ -61,11 +61,25 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
         if ((nodes[prev_pos].successors = (unsigned long *) realloc(nodes[prev_pos].successors, (nodes[prev_pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
           printf("Cannot REallocate memory for successors \n");
       }
+
+      // To check ways with only one node
+      flag = 1;
     } else if (counter > 8){
+      // If here, we have >1 nodes
+      flag = 0;
+
       // Find Current node
       curr = strtoul(tok, &tok, 10);
       if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) {printf("Node id not found\n"); return;}
-      printf("%ld\n", nodes[prev_pos].id);
+
+      // Set up successor
+      if (nodes[prev_pos].nsucc == 0){
+        if ((nodes[prev_pos].successors = (unsigned long *) malloc(sizeof(unsigned long))) == NULL)
+          printf("Cannot allocate memory for successors \n");
+      } else {
+        if ((nodes[prev_pos].successors = (unsigned long *) realloc(nodes[prev_pos].successors, (nodes[prev_pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
+          printf("Cannot REallocate memory for successors \n");
+      }
 
       // Set successor
       (nodes[prev_pos].successors)[nodes[prev_pos].nsucc] = curr_pos;
@@ -76,6 +90,12 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
       prev_pos = curr_pos;
     }
     counter++;
+  }
+  // Checking one node ways and clearing memory
+  if (flag == 1){
+    printf("Encountered way with <2 nodes, clearing \n");
+    free(nodes[prev_pos].successors);
+    nodes[prev_pos].successors = NULL;
   }
 }
 
@@ -110,7 +130,8 @@ void print_nodes(node * nodes, int no_nodes){
     printf("No. of successors of node %d: %d\n", i, nodes[i].nsucc);
 
     // Print successors
-    for (int j = 0; j < nodes[i].nsucc; j++) printf("%ld\n", nodes[i].successors[j]);
+    for (int j = 0; j < nodes[i].nsucc; j++)
+      printf("Successor %d of node %d is %ld\n", j, i, nodes[nodes[i].successors[j]].id);
     printf("\n");
   }
 }
@@ -146,5 +167,5 @@ void create_map(char * path){
   fclose(fp);
   if (line) free(line);
 
-  //print_nodes(nodes, no_nodes);
+  print_nodes(nodes, no_nodes);
 }
