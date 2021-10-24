@@ -7,13 +7,13 @@
 
 const char delim[] = "|";
 
-struct node{
+typedef struct{
   unsigned long id;  // Node identification
   char *name;
   double lat, lon;  // Node position
   unsigned short nsucc;  // Number of node successors; i. e. length of successors
-  unsigned long *successors;
-};
+  unsigned long *successors;  // Vector of successor indeces not ids
+}node;
 
 
 bool starts_with(const char *a, const char *b){
@@ -36,9 +36,9 @@ void process_way(char * line){
   printf("---------------\n");
 }
 
-void process_node(char * line, struct node ** nodes, int i){
+void process_node(char * line, node * nodes, int i){
   // Allocate space for new node
-  nodes[i] = malloc(sizeof(struct node));
+  //nodes[i] = malloc(sizeof(node));
 
   // Tokenize with delimiter |
   char *end = line;
@@ -47,27 +47,26 @@ void process_node(char * line, struct node ** nodes, int i){
   while ((tok = strsep(&end, delim)) != NULL){
     switch (counter){
       case 0:
-        nodes[i]->id = strtoul(tok, &tok, 10);
+        nodes[i].id = strtoul(tok, &tok, 10);
       case 1:
-        // TODO
-        nodes[i]->name = (char *) malloc(strlen(tok));
-        strcpy(nodes[i]->name, tok);
+        if ((nodes[i].name = (char *) malloc(strlen(tok) * sizeof(char))) != NULL) strcpy(nodes[i].name, tok);
       case 8:
-        nodes[i]->lat = atof(tok);
+        nodes[i].lat = atof(tok);
       case 9:
-        nodes[i]->lon = atof(tok);
+        nodes[i].lon = atof(tok);
     }
+    nodes[i].nsucc = 0;
     counter++;
   }
 }
 
-void print_nodes(struct node ** nodes){
-  for(int i = 0;i < N_NODES; i++){
-    printf("Node id of node %d: %ld\n", i, nodes[i]->id);
-    printf("Name of node %d: %s\n", i, nodes[i]->name);
-    printf("Latitude of node %d: %f\n", i, nodes[i]->lat);
-    printf("Longitude of node %d: %f\n", i, nodes[i]->lon);
-    printf("No. of successors of node %d: %d\n\n", i, nodes[i]->nsucc);
+void print_nodes(node * nodes, int no_nodes){
+  for(int i = 0;i < no_nodes; i++){
+    printf("Node id of node %d: %ld\n", i, nodes[i].id);
+    printf("Name of node %d: %s\n", i, nodes[i].name);
+    printf("Latitude of node %d: %f\n", i, nodes[i].lat);
+    printf("Longitude of node %d: %f\n", i, nodes[i].lon);
+    printf("No. of successors of node %d: %d\n\n", i, nodes[i].nsucc);
   }
 }
 
@@ -83,7 +82,8 @@ void create_map(char * path){
   }
 
   // Create nodes array
-  struct node ** nodes = malloc(N_NODES * sizeof(struct node *));
+  node * nodes = (node *) malloc(N_NODES * sizeof(node));
+  if (nodes == NULL) exit(1);
   int no_nodes = 0;
 
   // Read line by line
@@ -93,11 +93,13 @@ void create_map(char * path){
       no_nodes++;
     }
     else if (starts_with(line, "way")) process_way(line);
-    else continue;  // skip lines starting with # or relations
+    else if (starts_with(line, "#")) continue;  //skip lines starting with #
+    else break;  // relations are last, we can stop reading
   }
 
+  // clean up
   fclose(fp);
   if (line) free(line);
 
-  print_nodes(nodes);
+  print_nodes(nodes, no_nodes);
 }
