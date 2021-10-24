@@ -31,11 +31,6 @@ unsigned long nodesearch(node * nodes, unsigned long id, int no_nodes){
 }
 
 void process_way(char * line, node * nodes, int no_nodes /* can remove last argument later*/){
-  bool check_way(char * line){
-    // Discard ways with less than two nodes, or with node ids without nodes
-    return 1;
-  }
-
   // Variables to set ways
   bool flag, oneway = 0;
   unsigned long prev, curr;
