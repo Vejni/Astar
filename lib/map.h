@@ -2,6 +2,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <stdbool.h>
+# include <limits.h>
 
 # define N_NODES 23895681
 
@@ -21,25 +22,64 @@ bool starts_with(const char *a, const char *b){
    else return 0;
 }
 
-void process_way(char * line){
+unsigned long nodesearch(node * nodes, unsigned long id, int no_nodes){
+  unsigned long i;
+  for (i = 0; i < no_nodes; i++){
+    if (nodes[i].id == id) return i;
+  }
+  return -1;
+}
+
+void process_way(char * line, node * nodes, int no_nodes /* can remove last argument later*/){
   bool check_way(char * line){
     // Discard ways with less than two nodes, or with node ids without nodes
     return 1;
   }
 
+  // Variables to set ways
+  bool oneway = 0;
+  unsigned long prev, curr;
+  unsigned long prev_pos, curr_pos;
+
   // Tokenize with delimiter |
   char *end = line;
   char *tok = strsep(&end, delim);  // we can skip the first field
+  int counter = 0;
   while ((tok = strsep(&end, delim)) != NULL){
-    printf("%s\n", tok);
+    printf("%d, %s\n", counter, tok);
+    if (counter == 6) {
+      if (strcmp(tok, "way") != 0) {oneway = 1;}
+    } else if (counter == 8){
+      // Find Current node
+      prev = strtoul(tok, &tok, 10);
+      if ((prev_pos = nodesearch(nodes, prev, no_nodes)) == -1) {printf("Node id not found\n"); return;}
+      // Set up successors
+      if (nodes[prev_pos].nsucc == 0){
+        if ((nodes[prev_pos].successors = (unsigned long *) malloc(sizeof(unsigned long))) == NULL)
+          printf("Cannot allocate memory for successors \n");
+      } else {
+        if ((nodes[prev_pos].successors = (unsigned long *) realloc(nodes[prev_pos].successors, (nodes[prev_pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
+          printf("Cannot REallocate memory for successors \n");
+      }
+    } else if (counter > 8){
+      // Find Current node
+      curr = strtoul(tok, &tok, 10);
+      if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) {printf("Node id not found\n"); return;}
+      printf("%ld\n", nodes[prev_pos].id);
+
+      // Set successor
+      (nodes[prev_pos].successors)[nodes[prev_pos].nsucc] = curr_pos;
+      (nodes[prev_pos].nsucc)++;
+
+      // Set up for next iteration
+      prev = curr;
+      prev_pos = curr_pos;
+    }
+    counter++;
   }
-  printf("---------------\n");
 }
 
 void process_node(char * line, node * nodes, int i){
-  // Allocate space for new node
-  //nodes[i] = malloc(sizeof(node));
-
   // Tokenize with delimiter |
   char *end = line;
   char *tok = strsep(&end, delim);  // we can skip the first field
@@ -56,6 +96,7 @@ void process_node(char * line, node * nodes, int i){
         nodes[i].lon = atof(tok);
     }
     nodes[i].nsucc = 0;
+    nodes[i].successors = NULL;
     counter++;
   }
 }
@@ -66,7 +107,11 @@ void print_nodes(node * nodes, int no_nodes){
     printf("Name of node %d: %s\n", i, nodes[i].name);
     printf("Latitude of node %d: %f\n", i, nodes[i].lat);
     printf("Longitude of node %d: %f\n", i, nodes[i].lon);
-    printf("No. of successors of node %d: %d\n\n", i, nodes[i].nsucc);
+    printf("No. of successors of node %d: %d\n", i, nodes[i].nsucc);
+
+    // Print successors
+    for (int j = 0; j < nodes[i].nsucc; j++) printf("%ld\n", nodes[i].successors[j]);
+    printf("\n");
   }
 }
 
@@ -92,7 +137,7 @@ void create_map(char * path){
       process_node(line, nodes, no_nodes);
       no_nodes++;
     }
-    else if (starts_with(line, "way")) process_way(line);
+    else if (starts_with(line, "way")) process_way(line, nodes, no_nodes);
     else if (starts_with(line, "#")) continue;  //skip lines starting with #
     else break;  // relations are last, we can stop reading
   }
@@ -101,5 +146,5 @@ void create_map(char * path){
   fclose(fp);
   if (line) free(line);
 
-  print_nodes(nodes, no_nodes);
+  //print_nodes(nodes, no_nodes);
 }

@@ -7,5 +7,6 @@ node|171775|asd|||||||38.6067166|-0.0498342
 node|171776||||||||38.6026304|-0.0497205
 node|171933|||traffic_signals|||||40.4200658|-3.7016652
 node|171946|||traffic_signals|||||40.42125
-relation|171946|||traffic_signals|||||40.42125
 node|171946|||traffic_signals|||||40.42125
+way|407780|Oviedo-Porceyo||secondary||AS-266|oneway||171774|171775|171933
+#way|2497138|pit lane||raceway|||||171774|171946|171773
