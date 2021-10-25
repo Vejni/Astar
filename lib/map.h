@@ -45,7 +45,7 @@ void set_succ(node * nodes, unsigned long prev_pos, unsigned long curr_pos){
   (nodes[prev_pos].nsucc)++;
 }
 
-void process_way(char * line, node * nodes, int no_nodes /* can remove last argument later*/){
+void process_way(char * line, node * nodes, int no_nodes /* can remove last argument later*/, int i){
   // Variables to set ways
   bool oneway = 0;
   unsigned long prev, curr;
@@ -90,6 +90,11 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
     free(nodes[prev_pos].successors);
     nodes[prev_pos].successors = NULL;
   }
+
+  // Logging
+  if (i % 100 == 0){
+    printf("Read %d number of ways\n", i);
+  }
 }
 
 void process_node(char * line, node * nodes, int i){
@@ -102,7 +107,7 @@ void process_node(char * line, node * nodes, int i){
       case 0:
         nodes[i].id = strtoul(tok, &tok, 10);
       case 1:
-        if ((nodes[i].name = (char *) malloc(strlen(tok) * sizeof(char))) != NULL) strcpy(nodes[i].name, tok);
+        if ((nodes[i].name = (char *) malloc(sizeof(char) * (strlen(tok) + 1))) != NULL) strcpy(nodes[i].name, tok);
       case 8:
         nodes[i].lat = atof(tok);
       case 9:
@@ -111,6 +116,10 @@ void process_node(char * line, node * nodes, int i){
     nodes[i].nsucc = 0;
     nodes[i].successors = NULL;
     counter++;
+  }
+  // Logging
+  if (i % 1000000 == 0){
+    printf("Read %d number of nodes\n", i);
   }
 }
 
@@ -144,21 +153,27 @@ void create_map(char * path){
   node * nodes = (node *) malloc(N_NODES * sizeof(node));
   if (nodes == NULL) exit(1);
   int no_nodes = 0;
+  int no_ways = 0;
 
   // Read line by line
+  printf("Reading Map\n");
   while ((read = getline(&line, &len, fp)) != -1) {
     if (starts_with(line, "node")) {
       process_node(line, nodes, no_nodes);
       no_nodes++;
     }
-    else if (starts_with(line, "way")) process_way(line, nodes, no_nodes);
+    else if (starts_with(line, "way")) {
+      process_way(line, nodes, no_nodes, no_ways);
+      no_ways++;
+    }
     else if (starts_with(line, "#")) continue;  //skip lines starting with #
     else break;  // relations are last, we can stop reading
+    //if(no_ways > 3000) break;
   }
 
   // clean up
   fclose(fp);
   if (line) free(line);
 
-  print_nodes(nodes, no_nodes);
+  print_nodes(nodes, 100);
 }

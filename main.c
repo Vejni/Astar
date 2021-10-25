@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
 	char * path = malloc(50);
-	strcpy(path, "data/test.txt");
+	strcpy(path, "data/spain.csv");
 
 	create_map(path);
 	return 0;
