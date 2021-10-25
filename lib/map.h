@@ -23,9 +23,14 @@ bool starts_with(const char *a, const char *b){
 }
 
 unsigned long nodesearch(node * nodes, unsigned long id, int no_nodes){
-  unsigned long i;
-  for (i = 0; i < no_nodes; i++){
-    if (nodes[i].id == id) return i;
+  unsigned long first = 0;
+  unsigned long last = no_nodes;
+  unsigned long middle = (first+last)/2;
+  while (first <= last) {
+    if (nodes[middle].id < id) first = middle + 1;
+    else if (nodes[middle].id > id) last = middle - 1;
+    else return (middle+1);
+    middle = (first + last)/2;
   }
   return -1;
 }
@@ -168,7 +173,6 @@ void create_map(char * path){
     }
     else if (starts_with(line, "#")) continue;  //skip lines starting with #
     else break;  // relations are last, we can stop reading
-    //if(no_ways > 3000) break;
   }
 
   // clean up
