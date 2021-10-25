@@ -103,7 +103,7 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
   }
 
   // Logging
-  if (i % 10000 == 0){
+  if (i % 100000 == 0){
     printf("Read %d number of ways\n", i);
   }
 }
@@ -132,7 +132,7 @@ void process_node(char * line, node * nodes, int i){
   }
   // Logging
   if (i % 1000000 == 0){
-    printf("Read %d number of nodes\n", i);
+    printf("Read %d nodes\n", i);
   }
 }
 
@@ -151,7 +151,7 @@ void print_nodes(node * nodes, int no_nodes){
   }
 }
 
-void create_map(char * path){
+node * create_map(char * path){
   FILE * fp;
   char * line = NULL;
   size_t len = 0;
@@ -181,12 +181,11 @@ void create_map(char * path){
     }
     else if (starts_with(line, "#")) continue;  //skip lines starting with #
     else break;  // relations are last, we can stop reading
-    if (no_ways > 900000) break;  // For some reason the program gets killed between 930000 - 940000 ways
   }
 
   // clean up
   fclose(fp);
   if (line) free(line);
 
-  print_nodes(nodes, 1000);
+  return nodes;
 }
