@@ -32,7 +32,7 @@ unsigned long nodesearch(node * nodes, unsigned long id, int no_nodes){
 
 void process_way(char * line, node * nodes, int no_nodes /* can remove last argument later*/){
   // Variables to set ways
-  bool flag, oneway = 0;
+  bool oneway = 0;
   unsigned long prev, curr;
   unsigned long prev_pos, curr_pos;
 
@@ -56,13 +56,7 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
         if ((nodes[prev_pos].successors = (unsigned long *) realloc(nodes[prev_pos].successors, (nodes[prev_pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
           printf("Cannot REallocate memory for successors \n");
       }
-
-      // To check ways with only one node
-      flag = 1;
     } else if (counter > 8){
-      // If here, we have >1 nodes
-      flag = 0;
-
       // Find Current node
       curr = strtoul(tok, &tok, 10);
       if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) {printf("Node id not found\n"); return;}
@@ -86,8 +80,8 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
     }
     counter++;
   }
-  // Checking one node ways and clearing memory
-  if (flag == 1){
+  // If Counter is 9, we have only one node in the way, free memory
+  if (counter == 9){
     printf("Encountered way with <2 nodes, clearing \n");
     free(nodes[prev_pos].successors);
     nodes[prev_pos].successors = NULL;
