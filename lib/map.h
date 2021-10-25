@@ -30,6 +30,21 @@ unsigned long nodesearch(node * nodes, unsigned long id, int no_nodes){
   return -1;
 }
 
+void allocate_succ(node * nodes, unsigned long pos){
+  if (nodes[pos].nsucc == 0){
+    if ((nodes[pos].successors = (unsigned long *) malloc(sizeof(unsigned long))) == NULL)
+      printf("Cannot allocate memory for successors \n");
+  } else {
+    if ((nodes[pos].successors = (unsigned long *) realloc(nodes[pos].successors, (nodes[pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
+      printf("Cannot REallocate memory for successors \n");
+  }
+}
+
+void set_succ(node * nodes, unsigned long prev_pos, unsigned long curr_pos){
+  (nodes[prev_pos].successors)[nodes[prev_pos].nsucc] = curr_pos;
+  (nodes[prev_pos].nsucc)++;
+}
+
 void process_way(char * line, node * nodes, int no_nodes /* can remove last argument later*/){
   // Variables to set ways
   bool oneway = 0;
@@ -42,37 +57,26 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
   int counter = 0;
   while ((tok = strsep(&end, delim)) != NULL){
     if (counter == 6) {
-      if (strcmp(tok, "way") != 0) {oneway = 1;}
+      if (strcmp(tok, "oneway") != 0) {oneway = 1;}
     } else if (counter == 8){
       // Find Current node
       prev = strtoul(tok, &tok, 10);
       if ((prev_pos = nodesearch(nodes, prev, no_nodes)) == -1) {printf("Node id not found\n"); return;}
-
-      // Set up successor
-      if (nodes[prev_pos].nsucc == 0){
-        if ((nodes[prev_pos].successors = (unsigned long *) malloc(sizeof(unsigned long))) == NULL)
-          printf("Cannot allocate memory for successors \n");
-      } else {
-        if ((nodes[prev_pos].successors = (unsigned long *) realloc(nodes[prev_pos].successors, (nodes[prev_pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
-          printf("Cannot REallocate memory for successors \n");
-      }
     } else if (counter > 8){
       // Find Current node
       curr = strtoul(tok, &tok, 10);
       if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) {printf("Node id not found\n"); return;}
 
       // Set up successor
-      if (nodes[prev_pos].nsucc == 0){
-        if ((nodes[prev_pos].successors = (unsigned long *) malloc(sizeof(unsigned long))) == NULL)
-          printf("Cannot allocate memory for successors \n");
-      } else {
-        if ((nodes[prev_pos].successors = (unsigned long *) realloc(nodes[prev_pos].successors, (nodes[prev_pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
-          printf("Cannot REallocate memory for successors \n");
-      }
+      allocate_succ(nodes, prev_pos);
+      set_succ(nodes, prev_pos, curr_pos);
 
-      // Set successor
-      (nodes[prev_pos].successors)[nodes[prev_pos].nsucc] = curr_pos;
-      (nodes[prev_pos].nsucc)++;
+      // Process two-way street
+      if (oneway == 0){
+        // Set up successor
+        allocate_succ(nodes, curr_pos);
+        set_succ(nodes, curr_pos, prev_pos);
+      }
 
       // Set up for next iteration
       prev = curr;
