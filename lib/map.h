@@ -5,6 +5,7 @@
 # include <limits.h>
 
 # define N_NODES 23895681
+# define ALL_STEP 2
 
 const char delim[] = "|";
 
@@ -13,6 +14,7 @@ typedef struct{
   char *name;
   double lat, lon;  // Node position
   unsigned short nsucc;  // Number of node successors; i. e. length of successors
+  unsigned short nsucc_all;  // Number of successors allocated
   unsigned long *successors;  // Vector of successor indeces not ids
 }node;
 
@@ -36,12 +38,16 @@ unsigned long nodesearch(node * nodes, unsigned long id, int no_nodes){
 }
 
 void allocate_succ(node * nodes, unsigned long pos){
-  if (nodes[pos].nsucc == 0){
-    if ((nodes[pos].successors = (unsigned long *) malloc(sizeof(unsigned long))) == NULL)
+  if (nodes[pos].nsucc_all == 0){
+    // No memory allocated yet
+    if ((nodes[pos].successors = (unsigned long *) malloc(ALL_STEP * sizeof(unsigned long))) == NULL)
       printf("Cannot allocate memory for successors \n");
-  } else {
-    if ((nodes[pos].successors = (unsigned long *) realloc(nodes[pos].successors, (nodes[pos].nsucc + 1) * sizeof(unsigned long))) == NULL)
+    nodes[pos].nsucc_all = ALL_STEP;
+  } else if (nodes[pos].nsucc_all == nodes[pos].nsucc){
+    // Used all allocated memory
+    if ((nodes[pos].successors = (unsigned long *) realloc(nodes[pos].successors, (nodes[pos].nsucc_all + ALL_STEP) * sizeof(unsigned long))) == NULL)
       printf("Cannot REallocate memory for successors \n");
+    nodes[pos].nsucc_all = nodes[pos].nsucc_all + ALL_STEP;
   }
 }
 
@@ -66,11 +72,11 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
     } else if (counter == 8){
       // Find Current node
       prev = strtoul(tok, &tok, 10);
-      if ((prev_pos = nodesearch(nodes, prev, no_nodes)) == -1) {printf("Node id not found\n"); return;}
+      if ((prev_pos = nodesearch(nodes, prev, no_nodes)) == -1) return; //printf("Node id not found\n");
     } else if (counter > 8){
       // Find Current node
       curr = strtoul(tok, &tok, 10);
-      if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) {printf("Node id not found\n"); return;}
+      if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) return; //printf("Node id not found\n");
 
       // Set up successor
       allocate_succ(nodes, prev_pos);
@@ -97,7 +103,7 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
   }
 
   // Logging
-  if (i % 100 == 0){
+  if (i % 10000 == 0){
     printf("Read %d number of ways\n", i);
   }
 }
@@ -112,6 +118,7 @@ void process_node(char * line, node * nodes, int i){
       case 0:
         nodes[i].id = strtoul(tok, &tok, 10);
       case 1:
+        // Most names are empty. Do we really need this?
         if ((nodes[i].name = (char *) malloc(sizeof(char) * (strlen(tok) + 1))) != NULL) strcpy(nodes[i].name, tok);
       case 8:
         nodes[i].lat = atof(tok);
@@ -119,6 +126,7 @@ void process_node(char * line, node * nodes, int i){
         nodes[i].lon = atof(tok);
     }
     nodes[i].nsucc = 0;
+    nodes[i].nsucc_all = 0;
     nodes[i].successors = NULL;
     counter++;
   }
@@ -173,11 +181,12 @@ void create_map(char * path){
     }
     else if (starts_with(line, "#")) continue;  //skip lines starting with #
     else break;  // relations are last, we can stop reading
+    if (no_ways > 900000) break;  // For some reason the program gets killed between 930000 - 940000 ways
   }
 
   // clean up
   fclose(fp);
   if (line) free(line);
 
-  print_nodes(nodes, 100);
+  print_nodes(nodes, 1000);
 }
