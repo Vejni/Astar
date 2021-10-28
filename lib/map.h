@@ -3,7 +3,8 @@
 # include <string.h>
 # include <stdbool.h>
 # include <limits.h>
-
+# ifndef MAP_H
+# define MAP_H
 # define N_NODES 23895681
 # define ALL_STEP 2
 
@@ -189,3 +190,5 @@ node * create_map(char * path){
 
   return nodes;
 }
+
+#endif /* MAP_H /*
