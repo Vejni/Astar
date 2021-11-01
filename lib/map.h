@@ -191,4 +191,4 @@ node * create_map(char * path){
   return nodes;
 }
 
-#endif /* MAP_H /*
+#endif // MAP_H 

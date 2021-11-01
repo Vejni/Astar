@@ -1,4 +1,3 @@
 data/spain*
-main.o
-data.~lock.spain.csv#
-*.o
+data/.~lock.spain.csv#
+test.o
