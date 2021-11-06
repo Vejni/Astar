@@ -8,7 +8,7 @@
 # define MAP_H
 # define N_NODES 23895681
 # define ALL_STEP 2
-# define MAX_VALENCE 10
+# define MAX_VALENCE 11
 
 const char delim[] = "|";
 
@@ -23,18 +23,20 @@ typedef struct{
 
 
 bool starts_with(const char *a, const char *b){
-   if(strncmp(a, b, strlen(b)) == 0) return 1;
-   else return 0;
+  // String comparison
+  if(strncmp(a, b, strlen(b)) == 0) return 1;
+  else return 0;
 }
 
 unsigned long nodesearch(node * nodes, unsigned long id, int no_nodes){
+  // Standard binary search
   unsigned long first = 0;
   unsigned long last = no_nodes;
   unsigned long middle = (first+last)/2;
   while (first <= last) {
     if (nodes[middle].id < id) first = middle + 1;
     else if (nodes[middle].id > id) last = middle - 1;
-    else return (middle+1);
+    else return middle;
     middle = (first + last)/2;
   }
   return -1;
@@ -55,6 +57,12 @@ void allocate_succ(node * nodes, unsigned long pos){
 }
 
 void set_succ(node * nodes, unsigned long prev_pos, unsigned long curr_pos){
+  // First check if edge would be repeated
+  for(int i = 0; i < nodes[prev_pos].nsucc; i++){
+    if((nodes[prev_pos].successors)[i] == curr_pos) return;
+  }
+
+  // Otherwise set position and increment successors
   (nodes[prev_pos].successors)[nodes[prev_pos].nsucc] = curr_pos;
   (nodes[prev_pos].nsucc)++;
 }
@@ -71,16 +79,15 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
   int counter = 0;
   while ((tok = strsep(&end, delim)) != NULL){
     if (counter == 6) {
-      if (strcmp(tok, "oneway") != 0) {oneway = 1;}
+      if (strcmp(tok, "oneway") == 1) oneway = 1;
     } else if (counter == 8){
       // Find Current node
       prev = strtoul(tok, &tok, 10);
-      if ((prev_pos = nodesearch(nodes, prev, no_nodes)) == -1) return; //printf("Node id not found\n");
+      if ((prev_pos = nodesearch(nodes, prev, no_nodes)) == -1) continue; //printf("Node id not found\n");
     } else if (counter > 8){
       // Find Current node
       curr = strtoul(tok, &tok, 10);
-      if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) return; //printf("Node id not found\n");
-
+      if ((curr_pos = nodesearch(nodes, curr, no_nodes)) == -1) continue; //printf("Node id not found\n");
       // Set up successor
       allocate_succ(nodes, prev_pos);
       set_succ(nodes, prev_pos, curr_pos);
@@ -97,12 +104,6 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
       prev_pos = curr_pos;
     }
     counter++;
-  }
-  // If Counter is 9, we have only one node in the way, free memory
-  if (counter == 9){
-    printf("Encountered way with <2 nodes, clearing \n");
-    free(nodes[prev_pos].successors);
-    nodes[prev_pos].successors = NULL;
   }
 
   // Logging
@@ -139,17 +140,21 @@ void process_node(char * line, node * nodes, int i){
   }
 }
 
+void print_node(node * nodes, int i){
+  printf("Node id of node %d: %ld\n", i, nodes[i].id);
+  printf("Name of node %d: %s\n", i, nodes[i].name);
+  printf("Latitude of node %d: %f\n", i, nodes[i].lat);
+  printf("Longitude of node %d: %f\n", i, nodes[i].lon);
+  printf("No. of successors of node %d: %d\n", i, nodes[i].nsucc);
+
+  // Print successors
+  for (int j = 0; j < nodes[i].nsucc; j++)
+    printf("Successor %d of node %d is %ld\n", j, i, nodes[nodes[i].successors[j]].id);
+}
+
 void print_nodes(node * nodes, int no_nodes){
   for(int i = 0;i < no_nodes; i++){
-    printf("Node id of node %d: %ld\n", i, nodes[i].id);
-    printf("Name of node %d: %s\n", i, nodes[i].name);
-    printf("Latitude of node %d: %f\n", i, nodes[i].lat);
-    printf("Longitude of node %d: %f\n", i, nodes[i].lon);
-    printf("No. of successors of node %d: %d\n", i, nodes[i].nsucc);
-
-    // Print successors
-    for (int j = 0; j < nodes[i].nsucc; j++)
-      printf("Successor %d of node %d is %ld\n", j, i, nodes[nodes[i].successors[j]].id);
+    print_node(nodes, i);
     printf("\n");
   }
 }
@@ -159,10 +164,9 @@ void print_valences(node * nodes){
   int index, i;
   for(i = 0; i < N_NODES; i++){
     if((index = nodes[i].nsucc) > MAX_VALENCE){
-      printf("Valence too large: %d\n", index);
-      return;
-    }
-    valences[index]++;
+      printf("\nValence too large: %d\n\n", index);
+      print_node(nodes, i);
+    } else valences[index]++;
   }
 
   for(i = 0; i < MAX_VALENCE; i++){

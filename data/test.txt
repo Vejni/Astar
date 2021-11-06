@@ -1,9 +1,12 @@
 ### Format: relation|@id|@name|@place|@highway|@route|@ref|@oneway|@maxspeed|relation_type|membertype;@id;@role|...
 ### Format: way|@id|@name|@place|@highway|@route|@ref|@oneway|@maxspeed|member nodes|...
 ### Format: node|@id|@name|@place|@highway|@route|@ref|@oneway|@maxspeed|node_lat|node_lon
+node|171771|hello|||||||38.6048094|-0.0489952
 node|171773|hello|||||||38.6048094|-0.0489952
 node|171774|hii|||||||38.6061981|-0.0496867
 node|171775|asd|||||||38.6067166|-0.0498342
 node|171776||||||||38.6026304|-0.0497205
-way|407780|Oviedo-Porceyo||secondary||AS-266|oneway||171774|171775|171776
+way|407780|Oviedo-Porceyo||secondary||AS-266|||171774|171775|171776|171777|171778|171771
+way|2497138|pit lane||raceway|||||171777|171774|171776|171773
+way|2497138|pit lane||raceway|||||171777|171774|171778
 way|2497138|pit lane||raceway|||||171774|171776|171773
