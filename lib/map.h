@@ -3,10 +3,12 @@
 # include <string.h>
 # include <stdbool.h>
 # include <limits.h>
+
 # ifndef MAP_H
 # define MAP_H
 # define N_NODES 23895681
 # define ALL_STEP 2
+# define MAX_VALENCE 10
 
 const char delim[] = "|";
 
@@ -152,6 +154,22 @@ void print_nodes(node * nodes, int no_nodes){
   }
 }
 
+void print_valences(node * nodes){
+  int valences[MAX_VALENCE] = {0};
+  int index, i;
+  for(i = 0; i < N_NODES; i++){
+    if((index = nodes[i].nsucc) > MAX_VALENCE){
+      printf("Valence too large: %d\n", index);
+      return;
+    }
+    valences[index]++;
+  }
+
+  for(i = 0; i < MAX_VALENCE; i++){
+    printf("Valence %d has %d nodes\n", i, valences[i]);
+  }
+}
+
 node * create_map(char * path){
   FILE * fp;
   char * line = NULL;
@@ -191,4 +209,4 @@ node * create_map(char * path){
   return nodes;
 }
 
-#endif // MAP_H 
+#endif // MAP_H

@@ -7,9 +7,10 @@ int main(int argc, char *argv[]) {
 	strcpy(path, "data/spain.csv");
 
 	node * nodes = create_map(path);
+	print_valences(nodes);
 	write_binary("data/spain.bin", nodes);
 	nodes = read_binary("data/spain.bin");
 
-	print_nodes(nodes, 1000);
+	//print_nodes(nodes, 1000);
 	return 0;
 }
