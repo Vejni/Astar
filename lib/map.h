@@ -79,7 +79,7 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
   int counter = 0;
   while ((tok = strsep(&end, delim)) != NULL){
     if (counter == 6) {
-      if (strcmp(tok, "oneway") == 1) oneway = 1;
+      if (strcmp(tok, "oneway") == 0) oneway = 1;
     } else if (counter == 8){
       // Find Current node
       prev = strtoul(tok, &tok, 10);
