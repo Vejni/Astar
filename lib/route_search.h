@@ -1,16 +1,15 @@
-# include "map.h"
-# include "math.h"
-# define PI 3.14159265358979323846
-
-int suma(int a);
-
-typedef char Queue;
-enum whichQueue {NONE, OPEN, CLOSED};
+#include "map.h"
+#include "priority_queue.h"
+#include "math.h"
+#include <stdbool.h>
+#include <stdlib.h>
+#include <values.h>
+#define PI 3.14159265358979323846
 
 typedef struct {
-double g, h;
-unsigned long parent;
-Queue whq;
+    float g, h;
+    unsigned long parent;
+    bool visited;
 } AStarStatus;
 
 AStarStatus *init_astarstatus(unsigned long n_nodes){
@@ -19,12 +18,13 @@ AStarStatus *init_astarstatus(unsigned long n_nodes){
         exit;
     }
     for(unsigned long index = 0; index < n_nodes; index++){
-        status[index].whq = NONE;
+        status[index].visited = false;
+        status[index].g = MAXFLOAT;
     }
     return status;
 }
 
-double haversine_dist(node node1, node node2){
+float haversine_dist(node node1, node node2){
     /*
     Geodesic distance between two nodes with the haversine equation (high precission)
     */
@@ -36,6 +36,59 @@ double haversine_dist(node node1, node node2){
     return 6371008.8*a;
 };
 
-double heuristic(node current_node, node goal){
+float heuristic(node current_node, node goal){
     return haversine_dist(current_node, goal);    
 };
+
+PqElem* update_neighbours_distance(unsigned long index, unsigned long goal, AStarStatus *status, PqElem *pq, node *nodes){
+    unsigned long index_neig;
+    float new_distance;
+    for(int i=0; i<nodes[index].nsucc; i++){
+        index_neig = nodes[index].successors[i];
+        if(status[index_neig].visited == false){
+            new_distance = status[index].g + haversine_dist(nodes[index], nodes[index_neig]);
+            
+            if(status[index_neig].g == MAXFLOAT){
+                status[index_neig].g = new_distance;
+                status[index_neig].parent = index;
+                status[index_neig].h = heuristic(nodes[index_neig], nodes[goal]);
+                pq = add_with_priority(pq, index_neig, status[index_neig].g+status[index_neig].h);
+            }
+            else if(status[index_neig].g > new_distance){
+                status[index_neig].g = new_distance;
+                status[index_neig].parent = index;
+                pq = increase_priority(pq, index_neig, status[index_neig].g+status[index_neig].h);
+            }
+        }
+    }
+    return pq;
+
+}
+
+
+void astar(unsigned long source_index, unsigned long goal_index, AStarStatus *status, node *nodes, unsigned long n_nodes){
+    PqElem *pq = init_pq(source_index, 0);
+    unsigned long index = n_nodes+1;
+    while(index != goal_index){
+        index = extract_min(&pq);
+        status[index].visited = true;
+        pq = update_neighbours_distance(index, goal_index, status, pq, nodes);
+    }
+    return;
+}
+
+void save_route(unsigned long source_index, unsigned long goal_index, AStarStatus *status, node *nodes, char* path){
+    FILE *file;
+    if ((file = fopen(path ,"w")) == NULL){
+        printf("Cannot open file.\n");
+        exit(1);
+    }
+    fprintf(file, "longitude latitude\n");
+    unsigned long index = goal_index;
+    while(index != source_index){
+        fprintf(file, "%f %f\n", nodes[index].lon, nodes[index].lat);
+        index = status[index].parent;
+    }
+    fclose(file);
+    return;
+}

@@ -1,3 +1,5 @@
+#ifndef PRIORITY_QUEUE_H
+#define PRIORITY_QUEUE_H
 // Priority Queue Nodes
 typedef struct PqElem{
     unsigned long index;
@@ -10,6 +12,7 @@ PqElem *init_pq(unsigned long index, double cost){
     if(head==NULL){
         exit(66); 
     };
+    head->index = index;
     head->next = NULL;
     head->cost = cost;
 }
@@ -102,3 +105,4 @@ void show_queue(PqElem* head){
     }
 };
 
+#endif
