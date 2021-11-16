@@ -1,4 +1,4 @@
-latitude longitude
+longitude latitude
 -5.991742 37.386099
 -5.991812 37.386164
 -5.991830 37.386182

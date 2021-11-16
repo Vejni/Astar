@@ -15,6 +15,7 @@ PqElem *init_pq(unsigned long index, double cost){
     head->index = index;
     head->next = NULL;
     head->cost = cost;
+    return head;
 }
 
 unsigned long extract_min(PqElem **head){
