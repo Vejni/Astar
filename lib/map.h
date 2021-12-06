@@ -8,7 +8,7 @@
 # define MAP_H
 # define N_NODES 23895681
 # define ALL_STEP 2
-# define MAX_VALENCE 11
+# define MAX_VALENCE 10
 
 const char delim[] = "|";
 

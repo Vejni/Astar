@@ -36,11 +36,11 @@ float haversine_dist(node node1, node node2){
     return 6371008.8*a;
 };
 
-float heuristic(node current_node, node goal){
-    return haversine_dist(current_node, goal);    
+float heuristic(node current_node, node goal, double heuristic_param){
+    return pow(haversine_dist(current_node, goal), heuristic_param);    
 };
 
-PqElem* update_neighbours_distance(unsigned long index, unsigned long goal, AStarStatus *status, PqElem *pq, node *nodes){
+PqElem* update_neighbours_distance(unsigned long index, unsigned long goal, AStarStatus *status, PqElem *pq, node *nodes, double heuristic_param){
     unsigned long index_neig;
     float new_distance;
     for(int i=0; i<nodes[index].nsucc; i++){
@@ -51,7 +51,7 @@ PqElem* update_neighbours_distance(unsigned long index, unsigned long goal, ASta
             if(status[index_neig].g == MAXFLOAT){
                 status[index_neig].g = new_distance;
                 status[index_neig].parent = index;
-                status[index_neig].h = heuristic(nodes[index_neig], nodes[goal]);
+                status[index_neig].h = heuristic(nodes[index_neig], nodes[goal], heuristic_param);
                 pq = add_with_priority(pq, index_neig, status[index_neig].g+status[index_neig].h);
             }
             else if(status[index_neig].g > new_distance){
@@ -62,33 +62,65 @@ PqElem* update_neighbours_distance(unsigned long index, unsigned long goal, ASta
         }
     }
     return pq;
-
 }
 
 
-void astar(unsigned long source_index, unsigned long goal_index, AStarStatus *status, node *nodes, unsigned long n_nodes){
-    PqElem *pq = init_pq(source_index, 0);
-    unsigned long index = n_nodes+1;
-    while(index != goal_index){
-        index = extract_min(&pq);
-        status[index].visited = true;
-        pq = update_neighbours_distance(index, goal_index, status, pq, nodes);
-    }
-    return;
-}
+void save_results(unsigned long source_index, unsigned long goal_index, AStarStatus *status, node *nodes, PqElem *pq, char* path_route, char* path_stats){
 
-void save_route(unsigned long source_index, unsigned long goal_index, AStarStatus *status, node *nodes, char* path){
-    FILE *file;
-    if ((file = fopen(path ,"w")) == NULL){
-        printf("Cannot open file.\n");
+    FILE *file_route;
+    FILE *file_stats;
+    if ((file_route = fopen(path_route ,"w")) == NULL){
+        printf("Cannot write on file: '%s'\n", path_route);
         exit(1);
     }
-    fprintf(file, "longitude latitude\n");
+
+    if ((file_stats = fopen(path_stats ,"w")) == NULL){
+            printf("Cannot write on file: '%s'\n", path_stats);
+            exit(1);
+        }
+    
+    fprintf(file_route, "longitude latitude\n");
     unsigned long index = goal_index;
+    double eucl_distance = status[source_index].h;
+    int n_route_nodes = 0;
     while(index != source_index){
-        fprintf(file, "%f %f\n", nodes[index].lon, nodes[index].lat);
+        fprintf(file_route, "%f, %f\n", nodes[index].lon, nodes[index].lat);
         index = status[index].parent;
+        n_route_nodes++;
     }
-    fclose(file);
+
+    int n_non_visited_nodes = 0;
+    PqElem *elem = pq;
+    do{
+        n_non_visited_nodes++;
+        elem = elem->next;
+    }while(elem->next!=NULL);
+
+
+    // print stats
+    fprintf(file_stats, "Route distance: %f\n", status[goal_index].g);
+    fprintf(file_stats, "Geodesic distance: %f\n", status[source_index].h);
+    fprintf(file_stats, "Number of visited nodes: %d\n", n_route_nodes);
+    fprintf(file_stats, "Number of explored but non visited nodes: %d\n", n_non_visited_nodes);
+
+    fclose(file_route);
+    fclose(file_stats);
+    return;
+};
+
+void astar(unsigned long source_index, unsigned long goal_index, node *nodes, unsigned long n_nodes, char * path_route, char * stats_route, double heuristic_param, int save){
+    AStarStatus *status = init_astarstatus(n_nodes);
+    status[source_index].g = 0;
+	status[source_index].h = haversine_dist(nodes[source_index], nodes[goal_index]);
+
+    PqElem *pq = init_pq(source_index, 0);
+    unsigned long index;
+    do{
+        index = extract_min(&pq);
+        status[index].visited = true;
+        pq = update_neighbours_distance(index, goal_index, status, pq, nodes, heuristic_param);
+    }while(index != goal_index);
+
+    if (save!=0){save_results(source_index, goal_index, status, nodes, pq, path_route, stats_route);}
     return;
 }

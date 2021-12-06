@@ -1,0 +1,4 @@
+Route distance: 958816.625000
+Geodesic distance: 830698.312500
+Number of visited nodes: 6647
+Number of explored but non visited nodes: 833
