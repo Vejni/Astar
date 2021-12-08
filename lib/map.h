@@ -105,11 +105,6 @@ void process_way(char * line, node * nodes, int no_nodes /* can remove last argu
     }
     counter++;
   }
-
-  // Logging
-  if (i % 100000 == 0){
-    printf("Read %d number of ways\n", i);
-  }
 }
 
 void process_node(char * line, node * nodes, int i){
@@ -133,10 +128,6 @@ void process_node(char * line, node * nodes, int i){
     nodes[i].nsucc_all = 0;
     nodes[i].successors = NULL;
     counter++;
-  }
-  // Logging
-  if (i % 1000000 == 0){
-    printf("Read %d nodes\n", i);
   }
 }
 
