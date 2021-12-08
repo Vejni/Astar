@@ -22,12 +22,13 @@ int main(int argc, char *argv[]) {
   unsigned long source_index =  519833;  // Barcelona
   unsigned long index;
 
-	char * route_path = argc>1? argv[1] : "results/route.txt";
-	char * stats_path = argc>2? argv[2] : "results/stats.txt";
-	double heuristic_param = argc>3? atof(argv[3]) : 1.0;
-	int save_files = argc>4? atoi(argv[4]) : 1;
+	int save_files = argc>1? atoi(argv[1]) : 1;
+	char * route_path = argc>2? argv[2] : "results/route.txt";
+	char * stats_path = argc>3? argv[3] : "results/stats.txt";
+	int heuristic_func = argc>4? atof(argv[4]) : 1;
+	double heuristic_param = argc>5? atof(argv[5]) : 1.0;
 
-  astar(source_index, goal_index, nodes, N_NODES, route_path, stats_path, heuristic_param, save_files);
+  astar(source_index, goal_index, nodes, N_NODES, route_path, stats_path, heuristic_func, heuristic_param, save_files);
 
 	return 0;
 }
