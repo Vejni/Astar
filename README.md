@@ -7,6 +7,7 @@ This repo contains code to solve the routing problem assignment in the Optimizat
 - lib: Contains the source code.
 - notes: Contains other files used during development.
 - results: Contains performance statistics and the routes.
+- plot: Script for plotting and outputs.
 
 Main executable: astar or get_results.sh to do a batch of problems.
 
