@@ -116,13 +116,17 @@ void process_node(char * line, node * nodes, int i){
     switch (counter){
       case 0:
         nodes[i].id = strtoul(tok, &tok, 10);
+        break;
       case 1:
         // Most names are empty. Do we really need this?
         if ((nodes[i].name = (char *) malloc(sizeof(char) * (strlen(tok) + 1))) != NULL) strcpy(nodes[i].name, tok);
+        break;
       case 8:
         nodes[i].lat = atof(tok);
+        break;
       case 9:
         nodes[i].lon = atof(tok);
+        break;
     }
     nodes[i].nsucc = 0;
     nodes[i].nsucc_all = 0;

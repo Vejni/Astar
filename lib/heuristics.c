@@ -21,17 +21,18 @@ float spherical_law(node node1, node node2){
 }
 
 float equirectangular(node node1, node node2){
-  double lambda1 = node1.lon * PI/180;
-  double lambda2 = node2.lon * PI/180;
-  double x = ((node2.lat - node1.lat) * PI/180.0) * (cos(lambda1 + lambda2) * 0.5);
-  double y = lambda1 - lambda2;
+  double phi1 = node1.lat * PI/180;
+  double phi2 = node2.lat * PI/180;
+  double delta_lambda = (node2.lon - node1.lon) * PI/180;
+  double x = delta_lambda * (cos(phi1 + phi2) * 0.5);
+  double y = phi2 - phi1;
   double d = sqrt(x*x + y*y);
   return R * d;
 }
 
 float heuristic(node current_node, node goal, int heuristic_func, double heuristic_param){
   switch (heuristic_func){
-    case 3:
+    case 1:
       return pow(equirectangular(current_node, goal), heuristic_param);
     case 2:
       return pow(spherical_law(current_node, goal), heuristic_param);
