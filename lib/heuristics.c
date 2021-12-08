@@ -21,8 +21,10 @@ float spherical_law(node node1, node node2){
 }
 
 float equirectangular(node node1, node node2){
-  double x = ((node2.lat - node1.lat) * PI/180.0) * (cos((node1.lon + node2.lon) * PI/180.0)/2);
-  double y = (node1.lon - node2.lon) * PI/180.0;
+  double lambda1 = node1.lon * PI/180;
+  double lambda2 = node2.lon * PI/180;
+  double x = ((node2.lat - node1.lat) * PI/180.0) * (cos(lambda1 + lambda2) * 0.5);
+  double y = lambda1 - lambda2;
   double d = sqrt(x*x + y*y);
   return R * d;
 }

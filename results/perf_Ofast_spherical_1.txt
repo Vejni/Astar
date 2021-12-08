@@ -1,20 +1,20 @@
-# started on Wed Dec  8 10:48:15 2021
+# started on Wed Dec  8 14:56:10 2021
 
 
  Performance counter stats for './astar_Ofast 0 results/route_spherical_1.txt results/stats_spherical_1.txt 1 1':
 
-          5.835,05 msec task-clock                #    0,984 CPUs utilized          
-               429      context-switches          #    0,074 K/sec                  
+          5.349,22 msec task-clock                #    0,976 CPUs utilized          
+               503      context-switches          #    0,094 K/sec                  
                  0      cpu-migrations            #    0,000 K/sec                  
-           510.324      page-faults               #    0,087 M/sec                  
+           510.325      page-faults               #    0,095 M/sec                  
    <not supported>      cycles                                                      
    <not supported>      instructions                                                
    <not supported>      branches                                                    
    <not supported>      branch-misses                                               
 
-       5,929643996 seconds time elapsed
+       5,483542943 seconds time elapsed
 
-       4,764027000 seconds user
-       1,058672000 seconds sys
+       4,354505000 seconds user
+       0,984806000 seconds sys
 
 
