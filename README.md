@@ -20,7 +20,7 @@ Arguments (in order):
 
 Example: ./astar 1 "results/route_haversine_1.txt" "results/stats_haversine_1.txt" 1 1
 
-Note: The repo does not contain the csv file because of its size.
+Note: The repo does not contain the csv file because of its size. It can be found here https://mat.uab.cat/~alseda/MasterOpt/spain.csv.zip.
 
 For plotting we used:
 http://dwtkns.com/pointplotter/
