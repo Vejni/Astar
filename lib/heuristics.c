@@ -31,12 +31,19 @@ float equirectangular(node node1, node node2){
 }
 
 float heuristic(node current_node, node goal, int heuristic_func, double heuristic_param){
+  double heu_dist;
   switch (heuristic_func){
     case 1:
-      return pow(equirectangular(current_node, goal), heuristic_param);
+      heu_dist = equirectangular(current_node, goal);
     case 2:
-      return pow(spherical_law(current_node, goal), heuristic_param);
+      heu_dist = spherical_law(current_node, goal);
     default:
-      return pow(haversine_dist(current_node, goal), heuristic_param);
+      heu_dist = haversine_dist(current_node, goal);
   }
+  if(heuristic_param != 1.0){
+    heu_dist = pow(heu_dist, heuristic_param);
+  }
+
+  return heu_dist;
+
 }

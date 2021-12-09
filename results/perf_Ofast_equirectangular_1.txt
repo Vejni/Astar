@@ -1,20 +1,20 @@
-# started on Wed Dec  8 15:26:41 2021
+# started on Thu Dec  9 20:45:39 2021
 
 
  Performance counter stats for './astar_Ofast 0 results/route_equirectangular_1.txt results/stats_equirectangular_1.txt 1 1':
 
-          9.441,15 msec task-clock                #    0,982 CPUs utilized          
-               778      context-switches          #    0,082 K/sec                  
-                 0      cpu-migrations            #    0,000 K/sec                  
-           510.327      page-faults               #    0,054 M/sec                  
-   <not supported>      cycles                                                      
-   <not supported>      instructions                                                
-   <not supported>      branches                                                    
-   <not supported>      branch-misses                                               
+          3.787,72 msec task-clock                #    0,994 CPUs utilized          
+               141      context-switches          #    0,037 K/sec                  
+                 1      cpu-migrations            #    0,000 K/sec                  
+           510.327      page-faults               #    0,135 M/sec                  
+    12.129.083.258      cycles                    #    3,202 GHz                    
+     8.799.255.409      instructions              #    0,73  insn per cycle         
+     2.229.747.067      branches                  #  588,677 M/sec                  
+         7.563.032      branch-misses             #    0,34% of all branches        
 
-       9,610680977 seconds time elapsed
+       3,808708132 seconds time elapsed
 
-       8,460795000 seconds user
-       0,970456000 seconds sys
+       2,932487000 seconds user
+       0,853812000 seconds sys
 
 
