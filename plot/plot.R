@@ -1,7 +1,7 @@
 library(leaflet)
 library(tidyverse)
 
-df <-  read.table("../results/route_haversine_15.txt", skip = 1, header = FALSE, sep = ",", row.names = NULL)
+df <-  read.table("../results/route_haversine_1.txt", skip = 1, header = FALSE, sep = ",", row.names = NULL)
 colnames(df) <- c("longitude", "latitude")
 
 leaflet(data = df) %>%
