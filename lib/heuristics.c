@@ -33,7 +33,7 @@ float equirectangular(node node1, node node2){
 float heuristic(node current_node, node goal, int heuristic_func, double heuristic_param){
   double heu_dist;
   switch (heuristic_func){
-    case 1:
+    case 3:
       heu_dist = equirectangular(current_node, goal);
     case 2:
       heu_dist = spherical_law(current_node, goal);
