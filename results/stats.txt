@@ -1,3 +1,0 @@
-Route distance: 958816.625000
-Number of visited nodes: 6647
-Number of explored but non visited nodes: 1704

@@ -1,20 +1,20 @@
-# started on Thu Dec  9 22:15:20 2021
+# started on Sat Dec 11 16:39:28 2021
 
 
- Performance counter stats for './astar_O3 0 results/route_spherical_1.txt results/stats_spherical_1.txt 1 1':
+ Performance counter stats for './astar_O3 0 results/route_spherical_1.txt results/stats_spherical_1.txt 2 1':
 
-         10.116,61 msec task-clock                #    1,000 CPUs utilized          
-                36      context-switches          #    0,004 K/sec                  
-                 1      cpu-migrations            #    0,000 K/sec                  
-           510.328      page-faults               #    0,050 M/sec                  
-    19.012.574.250      cycles                    #    1,879 GHz                    
-     9.210.194.549      instructions              #    0,48  insn per cycle         
-     2.292.684.623      branches                  #  226,626 M/sec                  
-        11.547.294      branch-misses             #    0,50% of all branches        
+          4.453,39 msec task-clock                #    1,000 CPUs utilized          
+                20      context-switches          #    0,004 K/sec                  
+                 0      cpu-migrations            #    0,000 K/sec                  
+           557.015      page-faults               #    0,125 M/sec                  
+    16.213.395.861      cycles                    #    3,641 GHz                    
+    11.805.934.671      instructions              #    0,73  insn per cycle         
+     2.795.417.931      branches                  #  627,706 M/sec                  
+         9.386.621      branch-misses             #    0,34% of all branches        
 
-      10,120904588 seconds time elapsed
+       4,454102098 seconds time elapsed
 
-       7,833843000 seconds user
-       2,283371000 seconds sys
+       3,781515000 seconds user
+       0,672269000 seconds sys
 
 

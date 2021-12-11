@@ -1,20 +1,20 @@
-# started on Thu Dec  9 22:14:24 2021
+# started on Sat Dec 11 16:39:04 2021
 
 
  Performance counter stats for './astar_Ofast 0 results/route_haversine_1.txt results/stats_haversine_1.txt 1 1':
 
-          9.315,07 msec task-clock                #    0,991 CPUs utilized          
-             1.091      context-switches          #    0,117 K/sec                  
-                 5      cpu-migrations            #    0,001 K/sec                  
-           510.326      page-faults               #    0,055 M/sec                  
-    17.591.359.087      cycles                    #    1,888 GHz                    
-     8.809.571.124      instructions              #    0,50  insn per cycle         
-     2.232.044.739      branches                  #  239,617 M/sec                  
-        10.695.252      branch-misses             #    0,48% of all branches        
+          3.190,51 msec task-clock                #    1,000 CPUs utilized          
+                 7      context-switches          #    0,002 K/sec                  
+                 0      cpu-migrations            #    0,000 K/sec                  
+           556.996      page-faults               #    0,175 M/sec                  
+    11.490.637.571      cycles                    #    3,602 GHz                    
+     9.317.571.397      instructions              #    0,81  insn per cycle         
+     2.307.274.993      branches                  #  723,168 M/sec                  
+         7.733.721      branch-misses             #    0,34% of all branches        
 
-       9,403762031 seconds time elapsed
+       3,190924487 seconds time elapsed
 
-       7,347690000 seconds user
-       1,965776000 seconds sys
+       2,487098000 seconds user
+       0,703744000 seconds sys
 
 

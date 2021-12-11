@@ -1,20 +1,20 @@
-# started on Thu Dec  9 22:12:21 2021
+# started on Sat Dec 11 16:36:28 2021
 
 
  Performance counter stats for './astar 0 results/route_nobinary_haversine_1.txt results/stats_nobinary_haversine_1.txt 1 1':
 
-         29.117,01 msec task-clock                #    0,935 CPUs utilized          
-             1.637      context-switches          #    0,056 K/sec                  
-                40      cpu-migrations            #    0,001 K/sec                  
-         1.163.679      page-faults               #    0,040 M/sec                  
-    98.529.410.174      cycles                    #    3,384 GHz                    
-   161.923.094.756      instructions              #    1,64  insn per cycle         
-    31.486.762.912      branches                  # 1081,387 M/sec                  
-       273.854.455      branch-misses             #    0,87% of all branches        
+         25.290,35 msec task-clock                #    0,982 CPUs utilized          
+                93      context-switches          #    0,004 K/sec                  
+                 2      cpu-migrations            #    0,000 K/sec                  
+         1.210.351      page-faults               #    0,048 M/sec                  
+    91.979.544.030      cycles                    #    3,637 GHz                    
+   158.774.677.526      instructions              #    1,73  insn per cycle         
+    30.966.245.255      branches                  # 1224,429 M/sec                  
+       263.183.646      branch-misses             #    0,85% of all branches        
 
-      31,138043341 seconds time elapsed
+      25,751562181 seconds time elapsed
 
-      25,143327000 seconds user
-       3,990049000 seconds sys
+      22,920679000 seconds user
+       2,369724000 seconds sys
 
 

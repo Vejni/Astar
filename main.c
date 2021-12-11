@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 	int heuristic_func = argc>4? atof(argv[4]) : 1;
 	double heuristic_param = argc>5? atof(argv[5]) : 1.0;
 
+
   	astar(source_index, goal_index, nodes, N_NODES, route_path, stats_path, heuristic_func, heuristic_param, save_files);
 
 	return 0;

@@ -1,0 +1,20 @@
+# started on Sat Dec 11 16:37:56 2021
+
+
+ Performance counter stats for './astar 0 results/route_haversine_0.txt results/stats_haversine_0.txt 1 0':
+
+         14.804,99 msec task-clock                #    1,000 CPUs utilized          
+                41      context-switches          #    0,003 K/sec                  
+                 5      cpu-migrations            #    0,000 K/sec                  
+           557.002      page-faults               #    0,038 M/sec                  
+    54.869.252.275      cycles                    #    3,706 GHz                    
+    55.060.143.988      instructions              #    1,00  insn per cycle         
+    11.044.477.893      branches                  #  745,997 M/sec                  
+        32.506.363      branch-misses             #    0,29% of all branches        
+
+      14,806125555 seconds time elapsed
+
+      14,149676000 seconds user
+       0,655892000 seconds sys
+
+

@@ -1,0 +1,4 @@
+Route distance: 958816.337217
+Number of route nodes: 6648
+Number of open nodes: 849
+Number of closed nodes: 12286269

@@ -6,9 +6,9 @@
 #include <values.h>
 
 typedef struct {
-    float g, h;
+    double g, h;
     unsigned long parent;
-    bool visited;
+    bool expanded;
 } AStarStatus;
 
 AStarStatus *init_astarstatus(unsigned long n_nodes){
@@ -17,21 +17,21 @@ AStarStatus *init_astarstatus(unsigned long n_nodes){
         exit;
     }
     for(unsigned long index = 0; index < n_nodes; index++){
-        status[index].visited = false;
-        status[index].g = MAXFLOAT;
+        status[index].expanded = false;
+        status[index].g = DBL_MAX;
     }
     return status;
 }
 
 PqElem* update_neighbours_distance(unsigned long index, unsigned long goal, AStarStatus *status, PqElem *pq, node *nodes, int heuristic_func, double heuristic_param){
     unsigned long index_neig;
-    float new_distance;
+    double new_distance;
     for(int i=0; i<nodes[index].nsucc; i++){
         index_neig = nodes[index].successors[i];
-        if(status[index_neig].visited == false){
-            new_distance = status[index].g + haversine_dist(nodes[index], nodes[index_neig]);
+        if(status[index_neig].expanded == false){
+            new_distance = status[index].g + heuristic(nodes[index], nodes[index_neig], heuristic_func, 1);
 
-            if(status[index_neig].g == MAXFLOAT){
+            if(status[index_neig].g == DBL_MAX){
                 status[index_neig].g = new_distance;
                 status[index_neig].parent = index;
                 status[index_neig].h = heuristic(nodes[index_neig], nodes[goal], heuristic_func, heuristic_param);
@@ -48,7 +48,7 @@ PqElem* update_neighbours_distance(unsigned long index, unsigned long goal, ASta
 }
 
 
-void save_results(unsigned long source_index, unsigned long goal_index, AStarStatus *status, node *nodes, PqElem *pq, char* path_route, char* path_stats){
+void save_results(unsigned long source_index, unsigned long goal_index, unsigned long n_nodes, AStarStatus *status, node *nodes, PqElem *pq, char* path_route, char* path_stats){
     FILE *file_route;
     FILE *file_stats;
     if ((file_route = fopen(path_route ,"w")) == NULL){
@@ -63,7 +63,6 @@ void save_results(unsigned long source_index, unsigned long goal_index, AStarSta
 
     fprintf(file_route, "longitude latitude\n");
     unsigned long index = goal_index;
-    double eucl_distance = status[source_index].h;
     int n_route_nodes = 0;
     while(index != source_index){
         fprintf(file_route, "%f, %f\n", nodes[index].lon, nodes[index].lat);
@@ -71,18 +70,26 @@ void save_results(unsigned long source_index, unsigned long goal_index, AStarSta
         n_route_nodes++;
     }
 
-    int n_non_visited_nodes = 0;
+    int n_open_nodes = 0;
     PqElem *elem = pq;
     do{
-        n_non_visited_nodes++;
+        n_open_nodes++;
         elem = elem->next;
     } while(elem->next != NULL);
+
+    int n_closed_nodes = 0;
+    for(index = 0; index < n_nodes; index++){
+        if (status[index].expanded == true){
+            n_closed_nodes++;
+        }
+    }
 
 
     // print stats
     fprintf(file_stats, "Route distance: %f\n", status[goal_index].g);
-    fprintf(file_stats, "Number of visited nodes: %d\n", n_route_nodes);
-    fprintf(file_stats, "Number of explored but non visited nodes: %d\n", n_non_visited_nodes);
+    fprintf(file_stats, "Number of route nodes: %d\n", n_route_nodes);
+    fprintf(file_stats, "Number of open nodes: %d\n", n_open_nodes);
+    fprintf(file_stats, "Number of closed nodes: %d\n", n_closed_nodes);
 
     fclose(file_route);
     fclose(file_stats);
@@ -97,10 +104,10 @@ void astar(unsigned long source_index, unsigned long goal_index, node *nodes, un
     unsigned long index;
     do{
         index = extract_min(&pq);
-        status[index].visited = true;
+        status[index].expanded = true;
         pq = update_neighbours_distance(index, goal_index, status, pq, nodes, heuristic_func, heuristic_param);
     } while(index != goal_index);
 
-    if (save != 0) save_results(source_index, goal_index, status, nodes, pq, path_route, stats_route);
+    if (save != 0) save_results(source_index, goal_index, n_nodes, status, nodes, pq, path_route, stats_route);
     return;
 }

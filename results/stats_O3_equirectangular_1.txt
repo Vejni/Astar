@@ -1,3 +1,4 @@
-Route distance: 958816.625000
-Number of visited nodes: 6647
-Number of explored but non visited nodes: 1704
+Route distance: 958816.337800
+Number of route nodes: 6648
+Number of open nodes: 1708
+Number of closed nodes: 2310637
