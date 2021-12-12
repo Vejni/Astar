@@ -23,8 +23,8 @@ int main(int argc, char *argv[]) {
 	unsigned long index;
 
 	int save_files = argc>1? atoi(argv[1]) : 1;
-	char * route_path = argc>2? argv[2] : "/route.txt";
-	char * stats_path = argc>3? argv[3] : "/stats.txt";
+	char * route_path = argc>2? argv[2] : "./route.txt";
+	char * stats_path = argc>3? argv[3] : "./stats.txt";
 	int heuristic_func = argc>4? atof(argv[4]) : 1;
 	double heuristic_param = argc>5? atof(argv[5]) : 1.0;
 
